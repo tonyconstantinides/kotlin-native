@@ -133,7 +133,8 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
                         "-DKONAN_X64=1",
                         "-DUSE_ELF_SYMBOLS=1",
                         "-DELFSIZE=64",
-                        "-DKONAN_HAS_CXX11_EXCEPTION_FUNCTIONS=1")
+                        "-DKONAN_HAS_CXX11_EXCEPTION_FUNCTIONS=1",
+                        "-DKONAN_INTERNAL_MIMALLOC=1")
 
             KonanTarget.LINUX_ARM32_HFP ->
                 listOf("-DUSE_GCC_UNWIND=1",
@@ -176,7 +177,8 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
                         "-DKONAN_WINDOWS=1",
                         if (target == KonanTarget.MINGW_X64) "-DKONAN_X64=1" else "-DKONAN_X86=1",
                         "-DKONAN_NO_MEMMEM=1",
-                        "-DKONAN_HAS_CXX11_EXCEPTION_FUNCTIONS=1")
+                        "-DKONAN_HAS_CXX11_EXCEPTION_FUNCTIONS=1",
+                        "-DKONAN_INTERNAL_MIMALLOC=1")
 
             KonanTarget.MACOS_X64 ->
                 listOf("-DKONAN_OSX=1",
@@ -184,7 +186,8 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
                         "-DKONAN_X64=1",
                         "-DKONAN_OBJC_INTEROP=1",
                         "-DKONAN_CORE_SYMBOLICATION=1",
-                        "-DKONAN_HAS_CXX11_EXCEPTION_FUNCTIONS=1")
+                        "-DKONAN_HAS_CXX11_EXCEPTION_FUNCTIONS=1",
+                        "-DKONAN_INTERNAL_MIMALLOC=1")
 
             KonanTarget.IOS_ARM32 ->
                 listOf("-DKONAN_OBJC_INTEROP=1",
