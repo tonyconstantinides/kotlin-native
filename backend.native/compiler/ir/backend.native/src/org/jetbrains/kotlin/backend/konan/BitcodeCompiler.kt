@@ -47,6 +47,7 @@ internal class BitcodeCompiler(val context: Context) {
     }
 
     private fun opt(optFlags: OptFlags, bitcodeFile: BitcodeFile): BitcodeFile {
+        println("!!!!!!!!Start opt")
         val flags = (optFlags.optFlags + when {
             optimize -> optFlags.optOptFlags
             debug -> optFlags.optDebugFlags
@@ -60,7 +61,7 @@ internal class BitcodeCompiler(val context: Context) {
             runLateBitcodePasses(context, module)
             LLVMWriteBitcodeToFile(module, optimizedBc)
         }
-
+        println("!!!!!!!!End opt")
         return optimizedBc
     }
 
@@ -88,7 +89,7 @@ internal class BitcodeCompiler(val context: Context) {
 
     private fun optAndLlc(configurables: ZephyrConfigurables, file: BitcodeFile): String {
         val optimizedBc = temporary("optimized", ".bc")
-        val optFlags = llvmProfilingFlags() + listOf("-O3", "-internalize", "-globaldce")
+        val optFlags = llvmProfilingFlags() + listOf("-O3","-internalize", "-globaldce")
         hostLlvmTool("opt", file, "-o=$optimizedBc", *optFlags.toTypedArray())
 
         val combinedO = temporary("combined", ".o")
@@ -99,6 +100,7 @@ internal class BitcodeCompiler(val context: Context) {
     }
 
     private fun clang(configurables: ClangFlags, file: BitcodeFile): ObjectFile {
+        println("cCCCCC started clang")
         val objectFile = temporary("result", ".o")
 
         val profilingFlags = llvmProfilingFlags().map { listOf("-mllvm", it) }.flatten()
@@ -118,7 +120,7 @@ internal class BitcodeCompiler(val context: Context) {
             addNonEmpty(profilingFlags)
         }
         if (configurables is AppleConfigurables) {
-            targetTool("clang++", *flags.toTypedArray(), file, "-o", objectFile)
+            hostLlvmTool("clang++", *flags.toTypedArray(), file, "-o", objectFile)
         } else {
             hostLlvmTool("clang++", *flags.toTypedArray(), file, "-o", objectFile)
         }

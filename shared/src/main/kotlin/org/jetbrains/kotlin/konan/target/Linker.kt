@@ -191,6 +191,7 @@ open class MacOSBasedLinker(targetProperties: AppleConfigurables)
             if (profileLibrary != null) +profileLibrary!!
             +libraries
             +linkerArgs
+            //+"/Users/elena.lepilkina/mimalloc/out/release/libmimalloc.a"
             +rpath(dynamic)
         }) + if (debug) listOf(dsymUtilCommand(executable, outputDsymBundle)) else emptyList()
     }

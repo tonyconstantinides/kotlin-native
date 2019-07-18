@@ -103,6 +103,7 @@ internal fun runClosedWorldCleanup(context: Context) {
 }
 
 internal fun runLlvmOptimizationPipeline(context: Context) {
+    println("!!!!!!!runLlvmOptimizationPipeline")
     val llvmModule = context.llvmModule!!
     val config = LlvmPipelineConfiguration(context)
 

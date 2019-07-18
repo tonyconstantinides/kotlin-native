@@ -89,6 +89,7 @@ internal class Linker(val context: Context) {
 
         try {
             File(executable).delete()
+            println("AAAAAAAAAAAA Linker!!!")
             linker.linkCommands(objectFiles = objectFiles, executable = executable,
                     libraries = linker.linkStaticLibraries(includedBinaries) + context.config.defaultSystemLibraries,
                     linkerArgs = entryPointSelector +
@@ -97,6 +98,7 @@ internal class Linker(val context: Context) {
                             libraryProvidedLinkerFlags + frameworkLinkerArgs,
                     optimize = optimize, debug = debug, kind = linkerOutput,
                     outputDsymBundle = context.config.outputFile + ".dSYM").forEach {
+                println("${it.toString()}")
                 it.logWith(context::log)
                 it.execute()
             }

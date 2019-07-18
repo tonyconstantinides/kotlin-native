@@ -27,10 +27,15 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 class CompileCppToBitcode extends DefaultTask {
     private String name = "main"
     private String target = "host"
-    private File srcRoot;
+    private File srcRoot
+
+    protected Boolean includeCSources = false
+    protected List<File> cHeadersDirs = []
 
     protected List<String> compilerArgs = []
+    protected List<String> cCompilerArgs = []
     protected List<String> linkerArgs = []
+    protected List<String> excludedCFiles = []
 
     @InputDirectory
     File getSrcRoot() {
@@ -90,12 +95,40 @@ class CompileCppToBitcode extends DefaultTask {
         compilerArgs.addAll(args)
     }
 
+    void cCompilerArgs(String... args) {
+        cCompilerArgs.addAll(args)
+    }
+
+    void cCompilerArgs(List<String> args) {
+        cCompilerArgs.addAll(args)
+    }
+
     void linkerArgs(String... args) {
         linkerArgs.addAll(args)
     }
 
     void linkerArgs(List<String> args) {
         linkerArgs.addAll(args)
+    }
+
+    void excludedCFiles(String... files) {
+        excludedCFiles.addAll(files)
+    }
+
+    void excludedCFiles(List<String> files) {
+        excludedCFiles.addAll(files)
+    }
+
+    void cHeadersDirs(File... files) {
+        cHeadersDirs.addAll(files)
+    }
+
+    void cHeadersDirs(List<File> files) {
+        cHeadersDirs.addAll(files)
+    }
+
+    void includeCSources(Boolean value) {
+        includeCSources = value
     }
 
     @TaskAction
@@ -120,6 +153,21 @@ class CompileCppToBitcode extends DefaultTask {
             args project.fileTree(srcDir) {
                 include('**/*.cpp')
                 include('**/*.mm') // Objective-C++
+            }
+        }
+        if (includeCSources) {
+            project.execKonanClang(this.target) {
+                workingDir objDir
+                executable "clang"
+                args "-std=gnu11", "-O3", "-c", "-emit-llvm", "-Wall", "-Wextra", "-Wno-unknown-pragmas", "-ftls-model=initial-exec"
+                cHeadersDirs.each { headerDir ->
+                    args "-I${headerDir.absolutePath}"
+                }
+                args cCompilerArgs
+                args project.fileTree(new File(this.getSrcRoot(), "c")) {
+                    include("**/*.c")
+                    exclude(excludedCFiles)
+                }
             }
         }
 
